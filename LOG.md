@@ -1,6 +1,47 @@
 # Day 1 - 2/18/2026
 Finished the 147 midterm today. I didn't really study param update calculations and like optimizer stuff so i was lost TT. Project approved by Prof Kao. Task: Collect data using LeRobot SO-100 arm and Implement CNN + Transformer/LSTM architecture to generate robot actions. Possible tasks include pick & place, plug charger, or pouring. 
 
-- Setup conda env with lerobot 
+- Setup conda env with lerobot
+- lerobot-find-port # find port which arm is connected to
+sudo chmod 666 /dev/ttyACM*
+- lerobot-calibrate --robot.type=so100_follower --robot.port=/dev/ttyACM0 --robot.id=follower_arm 
+- lerobot-calibrate --teleop.type=so100_leader --teleop.port=/dev/ttyACM1 --teleop.id=leader_arm 
+
+Calibration having issues. Missing motors seemed to havea missing wire. Leader arm can calibrate after u use less output power cord.
+
+# Day 2 - 2/19/2026
+
+Got wire from lab and wired up the gripper for the follower arm. 
+Follower Arm Errors:
+Missing motor IDs:
+  - 1 (expected model: 777)
+  - 6 (expected model: 777)
+
+Full expected motor list (id: model_number):
+{1: 777, 2: 777, 3: 777, 4: 777, 5: 777, 6: 777}
+
+Full found motor list (id: model_number):
+{2: 777, 3: 777, 4: 777, 5: 777}
+
+lerobot-setup-motors --robot.type=so100_follower --robot.port=/dev/ttyACM0
+
+Connect the controller board to the 'gripper' motor only and press enter.
+'gripper' motor id set to 6
+Connect the controller board to the 'wrist_roll' motor only and press enter.
+'wrist_roll' motor id set to 5
+Connect the controller board to the 'wrist_flex' motor only and press enter.
+'wrist_flex' motor id set to 4
+Connect the controller board to the 'elbow_flex' motor only and press enter.
+'elbow_flex' motor id set to 3
+Connect the controller board to the 'shoulder_lift' motor only and press enter.
+'shoulder_lift' motor id set to 2
+Connect the controller board to the 'shoulder_pan' motor only and press enter.
+'shoulder_pan' motor id set to 1
+
+But after calibration still got missing motors for some of them. Will probably try rerouting them tmr. 
+
+Downloaded test lerobot data (videos and parquert). Implemented an extract frames which will captures frames in 30 FPS
+
+# Day 3 - 2/20/2026
 
 
