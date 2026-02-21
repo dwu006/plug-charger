@@ -44,4 +44,12 @@ Downloaded test lerobot data (videos and parquert). Implemented an extract frame
 
 # Day 3 - 2/20/2026
 
+- Extract frames work
+- Parquet file can be kept for training
+- Research how the CNN architecture will work
+- Add a basic cnn.py class that uses resnet18 backbone but changed last 2 layers
+
+# Day 4 - 2/21/2026
+
+
 
