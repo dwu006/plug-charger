@@ -51,5 +51,13 @@ Downloaded test lerobot data (videos and parquert). Implemented an extract frame
 
 # Day 4 - 2/21/2026
 
+- Switch new follower arm and calibration works
+- Leader arm calibration and motor kind of breaking for some reason, can't teleop or record 
 
+lerobot-teleoperate --robot.type=so100_follower --robot.port=/dev/ttyACM0 --robot.id=follower_arm --teleop.type=so100_leader --teleop.port=/dev/ttyACM0 --teleop.id=leader_arm
 
+lerobot-record --robot.type=so100_follower --robot.port=/dev/ttyACM0 --robot.id=follower_arm --teleop.type=so100_leader --teleop.port=/dev/ttyACM1 --teleop.id=leader_arm --dataset.repo_id=dwux/test_lerobot --dataset.num_episodes=1 --dataset.single_task="Plug the charger" --dataset.push_to_hub=false
+
+- Test realsense camera but doesn't really work, keeps breaking in between. Figured I need USB 3.0 and this old laptop doesn't have it will have to use my newer laptop. 
+
+# Day 5 - 2/22/2026
