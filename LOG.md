@@ -61,3 +61,10 @@ lerobot-record --robot.type=so100_follower --robot.port=/dev/ttyACM0 --robot.id=
 - Test realsense camera but doesn't really work, keeps breaking in between. Figured I need USB 3.0 and this old laptop doesn't have it will have to use my newer laptop. 
 
 # Day 5 - 2/22/2026
+
+lerobot-setup-motors --teleop.type=so100_leader --teleop.port=/dev/ttyACM0
+
+Tried Configuring setting up another leader arm. Doesn't seem to work at all. Even after resetting up the motors. I'm thinking of using teledex (control via phone) made by one of my labmates. 
+
+# Day 6 - 2/23/2026
+
