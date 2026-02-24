@@ -68,3 +68,12 @@ Tried Configuring setting up another leader arm. Doesn't seem to work at all. Ev
 
 # Day 6 - 2/23/2026
 
+- Found lerobot has its own phone teleop setup
+- Use lerobot's teleop with phone via the HEBI mobile IO app and the teleoperate script lerobot and able to control the arm
+- The control folder contains the lerobot phone teleop scripts and the urdf from TheRobotStudio, updated it to set the "name" and "family". 
+- Update the record script so we can choose when it starts to record: s to start, y to save, and r to retry the episode. 
+- Teleop is really hard to control with phone. Not exactly sure which direction for which for the robot.
+- Using a USB 3.0 port with realsense which works and test record camera - after some digging better to collect data in videos rather than frames
+
+# Day 7 - 2/24/2026
+
