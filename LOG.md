@@ -77,3 +77,7 @@ Tried Configuring setting up another leader arm. Doesn't seem to work at all. Ev
 
 # Day 7 - 2/24/2026
 
+- Tried using the so100 urdf for the teleop script - didnt work
+- Might build my own phone teleop app ...
+
+# Day 8 - 2/25/2026
