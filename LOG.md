@@ -81,3 +81,8 @@ Tried Configuring setting up another leader arm. Doesn't seem to work at all. Ev
 - Might build my own phone teleop app ...
 
 # Day 8 - 2/25/2026
+
+- Got midterm back, did way better than expected
+
+# Day 9 - 2/26/2025
+
