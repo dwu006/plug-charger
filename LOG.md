@@ -86,3 +86,6 @@ Tried Configuring setting up another leader arm. Doesn't seem to work at all. Ev
 
 # Day 9 - 2/26/2025
 
+- nothing done today
+
+# Day 10 - 2/27/2025
