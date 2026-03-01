@@ -93,3 +93,8 @@ Tried Configuring setting up another leader arm. Doesn't seem to work at all. Ev
 - Tried debugging teleop by printing our phone ar position and seeing if the inputs actually worked 
 
 # Day 11 - 2/28/2026
+
+- Busy writing my IROS paper
+
+# Day 12 - 3/1/2026
+
