@@ -98,3 +98,4 @@ Tried Configuring setting up another leader arm. Doesn't seem to work at all. Ev
 
 # Day 12 - 3/1/2026
 
+- same ^^
