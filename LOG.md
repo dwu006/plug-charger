@@ -84,18 +84,10 @@ Tried Configuring setting up another leader arm. Doesn't seem to work at all. Ev
 
 - Got midterm back, did way better than expected
 
-# Day 9 - 2/26/2026
+# Day 9 - 2/26/2026 to Day 15 - 3/4/2026
 
-- nothing done today
+- Busy with iros
 
-# Day 10 - 2/27/2026
+# Day 16 - 3/5/2026
 
-- Tried debugging teleop by printing our phone ar position and seeing if the inputs actually worked 
-
-# Day 11 - 2/28/2026
-
-- Busy writing my IROS paper
-
-# Day 12 - 3/1/2026
-
-- same ^^
+- Added lerobot support to Teledex (https://github.com/omarrayyann/TeleDex)
