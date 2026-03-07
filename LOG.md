@@ -90,4 +90,9 @@ Tried Configuring setting up another leader arm. Doesn't seem to work at all. Ev
 
 # Day 16 - 3/5/2026
 
-- Added lerobot support to Teledex (https://github.com/omarrayyann/TeleDex)
+- Added lerobot support to Teledex (https://github.com/omarrayyann/TeleDex) to control lerobot
+
+# Day 17 - 3/6/2025
+
+- Improved cnn.py with layer freezing methods and better dropout
+- Implemented transformer with TransformerEncoder with positional encoding
