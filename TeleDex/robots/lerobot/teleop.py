@@ -2,8 +2,9 @@
 Real-robot teleoperation for the SO101 arm using Teledex.
 
 Controls:
-  Hold BUTTON  — enable arm motion (phone position drives the EE)
-  TOGGLE       — open / close gripper
+  Phone position — drives EE position
+  Phone rotation — drives EE orientation (wrist control)
+  TOGGLE         — open / close gripper
 """
 
 import os
@@ -47,7 +48,7 @@ def main(robot_port: str = "/dev/ttyACM0") -> None:
         steps=[
             EEReferenceAndDelta(
                 kinematics=kinematics,
-                end_effector_step_sizes={"x": 1.0, "y": 1.0, "z": 1.0},
+                end_effector_step_sizes={"x": 1.0, "y": 1.0, "z": 1.0, "wx": 1.0, "wy": 1.0, "wz": 1.0},
                 motor_names=motor_names,
                 use_latched_reference=True,
             ),
@@ -70,10 +71,12 @@ def main(robot_port: str = "/dev/ttyACM0") -> None:
     session = Session(debug=True)
     session.start()
 
-    print("[SO101] Ready. Connect the Teledex app — phone movement drives the arm. TOGGLE opens/closes gripper.")
+    print("[SO101] Ready. Phone position drives EE position, phone rotation drives EE orientation.")
+    print("[SO101] TOGGLE opens/closes gripper.")
 
     # State
     phone_origin = None   # latched on first phone packet
+    rot_ref = None        # latched rotation reference
     gripper_closed = False
     last_toggle = None
 
@@ -88,11 +91,15 @@ def main(robot_port: str = "/dev/ttyACM0") -> None:
             if pos is None:
                 pos = latest.get("position_hand")
 
+            rot = latest.get("rotation")
             toggle = latest.get("toggle")
 
-            # Latch phone origin on first packet so delta starts at zero.
+            # Latch phone origin and rotation on first packet so delta starts at zero.
             if pos is not None and phone_origin is None:
                 phone_origin = np.array(pos, dtype=float)
+            
+            if rot is not None and rot_ref is None:
+                rot_ref = np.array(rot, dtype=float)
 
             # Phone delta → robot world frame.
             if pos is not None and phone_origin is not None:
@@ -101,6 +108,12 @@ def main(robot_port: str = "/dev/ttyACM0") -> None:
             else:
                 delta = np.zeros(3)
                 enabled = False
+
+            # Phone rotation → extract pitch for wrist_flex control.
+            target_wy = 0.0
+            if rot is not None and rot_ref is not None:
+                R_rel = rot_ref.T @ np.array(rot, dtype=float)
+                target_wy = float(np.arctan2(-R_rel[2][0], np.sqrt(R_rel[2][1]**2 + R_rel[2][2]**2)))
 
             # Toggle → flip gripper on any state change.
             if last_toggle is not None and toggle != last_toggle:
@@ -113,7 +126,7 @@ def main(robot_port: str = "/dev/ttyACM0") -> None:
                 "target_y": float(delta[1]),
                 "target_z": float(delta[2]),
                 "target_wx": 0.0,
-                "target_wy": 0.0,
+                "target_wy": target_wy,
                 "target_wz": 0.0,
                 "gripper_vel": 1.0 if gripper_closed else -1.0,
             }

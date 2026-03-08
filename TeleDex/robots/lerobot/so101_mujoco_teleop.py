@@ -13,6 +13,8 @@ import numpy as np
 
 from teledex import Session, MujocoHandler
 
+WRIST_SCALE = 1.0
+
 
 def main() -> None:
     here = os.path.dirname(__file__)
@@ -63,11 +65,15 @@ def main() -> None:
         ],
     )
 
+    # Pre-seed the site so IK never chases (0,0,0) before the first phone packet.
+    model.site_pos[teleop_site_id] = np.array(ref_site_pos)
+
     session.start()
 
     # Gripper state — flip on any change of the toggle value.
     gripper_closed = False
     last_toggle = None
+    rot_ref = None
 
     try:
         with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui=False) as viewer:
@@ -77,6 +83,9 @@ def main() -> None:
                 pos = latest.get("position")
                 if pos is None:
                     pos = latest.get("position_hand")
+                rotation = latest.get("rotation")
+                if rotation is not None and rot_ref is None:
+                    rot_ref = np.array(rotation, dtype=float)
 
                 if pos is not None:
                     target_pos = model.site_pos[teleop_site_id].copy()
@@ -99,6 +108,17 @@ def main() -> None:
 
                         for qid, dq_i in zip(qpos_ids, dq):
                             data.qpos[qid] += float(dq_i)
+
+                    if rotation is not None and rot_ref is not None:
+                        R_rel = rot_ref.T @ np.array(rotation, dtype=float)
+                        pitch = np.arctan2(-R_rel[2][0], np.sqrt(R_rel[2][1]**2 + R_rel[2][2]**2))
+                        wf_qid = qpos_ids[3]   # wrist_flex is index 3 in ik_joint_names
+                        wf_jid = joint_id("wrist_flex")
+                        data.qpos[wf_qid] = float(np.clip(
+                            data.qpos[wf_qid] + pitch * WRIST_SCALE,
+                            model.jnt_range[wf_jid][0],
+                            model.jnt_range[wf_jid][1],
+                        ))
 
                 # Toggle button → flip gripper on any state change.
                 toggle = latest.get("toggle")
