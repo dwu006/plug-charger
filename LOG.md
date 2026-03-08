@@ -96,3 +96,9 @@ Tried Configuring setting up another leader arm. Doesn't seem to work at all. Ev
 
 - Improved cnn.py with layer freezing methods and better dropout
 - Implemented transformer with TransformerEncoder with positional encoding
+
+# Day 18 -3/7/2025
+
+- Fixed an issue with the lerobot teleop where it wasn't moving the wrist flex
+- Tried recording an episode and replaying it (worked!)
+- Combined transformer and cnn into our policy: cnn --> transformer --> generate actions (5 joints + gripper)

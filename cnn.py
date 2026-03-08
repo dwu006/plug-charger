@@ -22,17 +22,13 @@ class CNN(nn.Module):
         features = self.dropout(features)
         return features
     
-    def freeze_layers(self):
+    def freeze(self):
         for name, param in self.named_parameters():
             if any(f'backbone.{i}' in name for i in range(5)):
                 param.requires_grad = False
             else:
                 param.requires_grad = True
     
-    def unfreeze_all(self):
+    def unfreeze(self):
         for param in self.parameters():
             param.requires_grad = True
-    
-    def freeze_all(self):
-        for param in self.parameters():
-            param.requires_grad = False
