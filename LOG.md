@@ -102,3 +102,9 @@ Tried Configuring setting up another leader arm. Doesn't seem to work at all. Ev
 - Fixed an issue with the lerobot teleop where it wasn't moving the wrist flex
 - Tried recording an episode and replaying it (worked!)
 - Combined transformer and cnn into our policy: cnn --> transformer --> generate actions (5 joints + gripper)
+
+# Day 19 - 3/8/2025
+
+- Wrote load dataset to load all our joint data and other metadata in the parquet into dataloader
+- train.py - our training script for our cnn+transformer policy
+- camera recording at 640x480 for rgbd

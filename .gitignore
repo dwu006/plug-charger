@@ -1,6 +1,6 @@
 test/
 output/
 __pycache__/
-data/
+data*/
 SO100/
 SO101/
