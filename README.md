@@ -1,25 +1,12 @@
 # Learning to Pick and Place
 
-Imitation learning system for a robotic pick-and-place task using a LeRobot SO-100 arm and Intel RealSense RGBD camera. A Transformer policy learns from teleoperated demonstrations to predict motor commands with action chunking.
+cs147 project
 
-<table>
-<tr>
-<td align="center"><b>Deployment</b></td>
-<td align="center"><b>Teleoperation</b></td>
-</tr>
-<tr>
-<td>
+### Demo
+https://github.com/user-attachments/assets/78281342-b421-4e9d-a988-e4f57dd24456
 
-https://github.com/dwu006/plug-charger/raw/main/demo/demo.mp4
-
-</td>
-<td>
-
-https://github.com/dwu006/plug-charger/raw/main/demo/teleop.mp4
-
-</td>
-</tr>
-</table>
+### Teleoperation
+https://github.com/user-attachments/assets/bf4fb598-7dc2-4736-9bcc-c6b879af22a7
 
 ## Setup
 
