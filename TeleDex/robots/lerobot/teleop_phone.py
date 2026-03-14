@@ -1,12 +1,3 @@
-"""
-Real-robot teleoperation for the SO101 arm using Teledex.
-
-Controls:
-  Phone position — drives EE position
-  Phone rotation — drives EE orientation (wrist control)
-  TOGGLE         — open / close gripper
-"""
-
 import os
 import time
 
@@ -27,7 +18,6 @@ from lerobot.utils.robot_utils import precise_sleep
 
 FPS = 30
 
-# Maps phone-space axes → robot-world axes (same mapping as the MuJoCo sim).
 _R_PHONE_TO_WORLD = np.array([[0, -1, 0],
                                [1,  0, 0],
                                [0,  0, 1]], dtype=float)
@@ -37,11 +27,9 @@ def main(robot_port: str = "/dev/ttyACM0") -> None:
     here = os.path.dirname(__file__)
     urdf_path = os.path.join(here, "SO101", "so101_new_calib.urdf")
 
-    # --- Robot ---
     motor_names = ["shoulder_pan", "shoulder_lift", "elbow_flex", "wrist_flex", "wrist_roll", "gripper"]
     robot = SO100Follower(SO100FollowerConfig(port=robot_port, id="follower_arm", use_degrees=True))
 
-    # --- Kinematics + pipeline ---
     kinematics = RobotKinematics(urdf_path=urdf_path, target_frame_name="gripper_frame_link",
                                   joint_names=motor_names)
     pipeline = RobotProcessorPipeline[tuple[RobotAction, RobotObservation], RobotAction](
@@ -63,20 +51,17 @@ def main(robot_port: str = "/dev/ttyACM0") -> None:
         to_output=transition_to_robot_action,
     )
 
-    # --- Connect ---
     robot.connect()
     if not robot.is_connected:
-        raise RuntimeError("Failed to connect to SO101 robot.")
+        raise RuntimeError("failed to connect to SO101")
 
     session = Session(debug=True)
     session.start()
 
-    print("[SO101] Ready. Phone position drives EE position, phone rotation drives EE orientation.")
-    print("[SO101] TOGGLE opens/closes gripper.")
+    print("ready - phone position drives EE, toggle opens/closes gripper")
 
-    # State
-    phone_origin = None   # latched on first phone packet
-    rot_ref = None        # latched rotation reference
+    phone_origin = None
+    rot_ref = None
     gripper_closed = False
     last_toggle = None
 
@@ -94,28 +79,25 @@ def main(robot_port: str = "/dev/ttyACM0") -> None:
             rot = latest.get("rotation")
             toggle = latest.get("toggle")
 
-            # Latch phone origin and rotation on first packet so delta starts at zero.
             if pos is not None and phone_origin is None:
                 phone_origin = np.array(pos, dtype=float)
-            
+
             if rot is not None and rot_ref is None:
                 rot_ref = np.array(rot, dtype=float)
 
-            # Phone delta → robot world frame.
             if pos is not None and phone_origin is not None:
-                delta = _R_PHONE_TO_WORLD @ (np.array(pos, dtype=float) - phone_origin)
+                raw = np.array(pos, dtype=float) - phone_origin
+                delta = _R_PHONE_TO_WORLD @ raw
                 enabled = True
             else:
                 delta = np.zeros(3)
                 enabled = False
 
-            # Phone rotation → extract pitch for wrist_flex control.
             target_wy = 0.0
             if rot is not None and rot_ref is not None:
                 R_rel = rot_ref.T @ np.array(rot, dtype=float)
                 target_wy = float(np.arctan2(-R_rel[2][0], np.sqrt(R_rel[2][1]**2 + R_rel[2][2]**2)))
 
-            # Toggle → flip gripper on any state change.
             if last_toggle is not None and toggle != last_toggle:
                 gripper_closed = not gripper_closed
             last_toggle = toggle
@@ -139,7 +121,7 @@ def main(robot_port: str = "/dev/ttyACM0") -> None:
     except KeyboardInterrupt:
         pass
     finally:
-        print("[SO101] Stopping.")
+        print("stopping")
         session.stop()
         robot.disconnect()
 

@@ -92,19 +92,68 @@ Tried Configuring setting up another leader arm. Doesn't seem to work at all. Ev
 
 - Added lerobot support to Teledex (https://github.com/omarrayyann/TeleDex) to control lerobot
 
-# Day 17 - 3/6/2025
+# Day 17 - 3/6/2026
 
 - Improved cnn.py with layer freezing methods and better dropout
 - Implemented transformer with TransformerEncoder with positional encoding
 
-# Day 18 -3/7/2025
+# Day 18 - 3/7/2026
 
 - Fixed an issue with the lerobot teleop where it wasn't moving the wrist flex
 - Tried recording an episode and replaying it (worked!)
 - Combined transformer and cnn into our policy: cnn --> transformer --> generate actions (5 joints + gripper)
 
-# Day 19 - 3/8/2025
+# Day 19 - 3/8/2026
 
 - Wrote load dataset to load all our joint data and other metadata in the parquet into dataloader
 - train.py - our training script for our cnn+transformer policy
 - camera recording at 640x480 for rgbd
+
+# Day 20 - 3/9/2026
+
+- Phone teleop wasnt precise enough, switched to lerobot keyboard teleop
+- Collected 10 ep of plugging charger, trained a model, wrote deploy script and deployed
+- Found it sucked, probably problem in code but realized task it too hard with bad HW, switching to just pick and place
+- Added lstm policy pipelines 
+
+# Day 21 - 3/10/2026
+
+- Collected 50ish episodes of pick and place task with keyboard teleop
+- Realized data was corrupted because i didn't close the file which was still writing and i killed the script
+- Recollected data and trained 50 episodes, deployed — robot reaches but freezes after picking up block
+- Realized my actions joints were raw positions so fix that recollect
+- Trained and redeployed - failed
+- Change my setup so the container is on the side not block most of the top down cam
+- Trained and deployed - kind of working (like can do parts with help) 
+- Switched to z-score normalization (mean/std per joint), saves norm_stats.npz with dataset
+- Added action chunking (similar to act) — model predicts K future actions instead of 1 
+- Trained and redeployed - had one sucessful run but had to reposiiton obj
+- decided just focus on transformer (no lstm)
+
+# Day 22 - 3/11/2026
+
+- create data augment script to add or remove brightness and vary the copied joint data a bit 
+- Training now uses AdamW with weight decay, warmup + cosine schedule, early stopping, grad clipping
+- Added smoothness loss (0.1 weight) to encourage smooth action chunks
+- Two-phase training: phase 1 with frozen CNN features, phase 2 fine-tunes CNN on raw images
+- Tested diff chunk size 4 i think works best for this 
+- Add chunk blend for smoother transitions
+
+# Day 23 - 3/12/2026
+
+- More training and deployment
+- Run model for results
+- Get the loss curves 
+- Tested data augmentation
+- Worked on report
+
+# Day 24 - 3/13/2026
+
+- Final deployment tests 
+- Worked on report
+
+
+# Day 25 - 3/14/2026
+
+- Cleaned up code
+- Finished report

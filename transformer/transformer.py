@@ -11,7 +11,6 @@ class PosEncoder(nn.Module):
         x += self.embedding[:, :x.size(1), :]
         return self.dropout(x)
 
-
 class Transformer(nn.Module):
     def __init__(self, inputDim=512, hiddenDim=256, nhead=8, numLayers=4, dropout=0.1, maxSeqLen=100):
         super().__init__()

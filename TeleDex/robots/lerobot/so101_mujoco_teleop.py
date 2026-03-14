@@ -1,10 +1,3 @@
-"""
-MuJoCo teleoperation for the LeRobot SO101 arm using Teledex.
-
-Loads SO101/scene.xml, connects to the Teledex phone app, and uses
-Jacobian IK to drive the arm. The toggle button opens/closes the gripper.
-"""
-
 import os
 
 import mujoco
@@ -30,32 +23,27 @@ def main() -> None:
     target_site_id = site_id("gripperframe")
     teleop_site_id = site_id("teleop_target")
 
-    # IK joints (shoulder → wrist, not gripper).
     ik_joint_names = ["shoulder_pan", "shoulder_lift", "elbow_flex", "wrist_flex", "wrist_roll"]
-    dof_ids  = [int(model.jnt_dofadr[joint_id(n)])  for n in ik_joint_names]
+    dof_ids = [int(model.jnt_dofadr[joint_id(n)]) for n in ik_joint_names]
     qpos_ids = [int(model.jnt_qposadr[joint_id(n)]) for n in ik_joint_names]
 
-    # Gripper joint — driven by toggle button.
     g_jid = joint_id("gripper")
     g_qpos_id = int(model.jnt_qposadr[g_jid])
-    GRIPPER_OPEN   = float(model.jnt_range[g_jid][0])
+    GRIPPER_OPEN = float(model.jnt_range[g_jid][0])
     GRIPPER_CLOSED = float(model.jnt_range[g_jid][1])
 
-    # --- Teledex ---
     session = Session(debug=True)
 
     mujoco.mj_forward(model, data)
     ref_site_pos = data.site_xpos[target_site_id].copy()
 
-    # position_origin = R_post.T @ ref_site_pos so that when the phone starts at
-    # (0,0,0), MujocoHandler places the target exactly on the EE (no startup snap).
     R_post = np.array([[0, -1, 0], [1, 0, 0], [0, 0, 1]], dtype=float)
 
     handler = MujocoHandler(model=model, data=data)
     session.add_handler(handler)
     handler.link_site(
         name="teleop_target",
-        scale=2.0,
+        scale=0.5,
         position_origin=(R_post.T @ ref_site_pos).tolist(),
         post_transform=[
             [0, -1, 0, 0],
@@ -65,19 +53,18 @@ def main() -> None:
         ],
     )
 
-    # Pre-seed the site so IK never chases (0,0,0) before the first phone packet.
+    # seed the site so IK doesn't chase (0,0,0) before first phone packet
     model.site_pos[teleop_site_id] = np.array(ref_site_pos)
 
     session.start()
 
-    # Gripper state — flip on any change of the toggle value.
     gripper_closed = False
     last_toggle = None
     rot_ref = None
 
     try:
         with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui=False) as viewer:
-            print("[SO101] Viewer running. Connect the Teledex app to start.")
+            print("viewer running, connect teledex app to start")
             while viewer.is_running():
                 latest = session.get_latest_data()
                 pos = latest.get("position")
@@ -112,7 +99,7 @@ def main() -> None:
                     if rotation is not None and rot_ref is not None:
                         R_rel = rot_ref.T @ np.array(rotation, dtype=float)
                         pitch = np.arctan2(-R_rel[2][0], np.sqrt(R_rel[2][1]**2 + R_rel[2][2]**2))
-                        wf_qid = qpos_ids[3]   # wrist_flex is index 3 in ik_joint_names
+                        wf_qid = qpos_ids[3]
                         wf_jid = joint_id("wrist_flex")
                         data.qpos[wf_qid] = float(np.clip(
                             data.qpos[wf_qid] + pitch * WRIST_SCALE,
@@ -120,7 +107,6 @@ def main() -> None:
                             model.jnt_range[wf_jid][1],
                         ))
 
-                # Toggle button → flip gripper on any state change.
                 toggle = latest.get("toggle")
                 if last_toggle is not None and toggle != last_toggle:
                     gripper_closed = not gripper_closed

@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torchvision.models as models
 
-
 class CNN(nn.Module):
     def __init__(self, outputDim=512, dropout=0.2):
         super().__init__()
@@ -11,8 +10,8 @@ class CNN(nn.Module):
         oldConv = resnet.conv1
         newConv = nn.Conv2d(4, 64, kernel_size=7, stride=2, padding=3, bias=False)
         with torch.no_grad():
-            newConv.weight[:, :3] = oldConv.weight
-            newConv.weight[:, 3] = oldConv.weight.mean(1)
+            newConv.weight[:,:3] = oldConv.weight
+            newConv.weight[:,3] = oldConv.weight.mean(1)
         resnet.conv1 = newConv
 
         self.backbone = nn.Sequential(*list(resnet.children())[:-2])
@@ -29,11 +28,20 @@ class CNN(nn.Module):
 
     def freeze(self):
         for name, param in self.named_parameters():
-            if any(f'backbone.{i}' in name for i in range(5)):
-                param.requires_grad = False
-            else:
-                param.requires_grad = True
+            frozen = False
+            for i in range(5):
+                if f'backbone.{i}' in name:
+                    frozen = True
+                    break
+            param.requires_grad = not frozen
 
     def unfreeze(self):
         for param in self.parameters():
             param.requires_grad = True
+
+    def finetune(self):
+        for name, param in self.named_parameters():
+            if any(f'backbone.{i}' in name for i in range(3)):
+                param.requires_grad = False
+            else:
+                param.requires_grad = True
