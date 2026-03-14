@@ -6,7 +6,7 @@ cs147 project
 https://github.com/user-attachments/assets/78281342-b421-4e9d-a988-e4f57dd24456
 
 ### Teleoperation
-https://github.com/user-attachments/assets/bf4fb598-7dc2-4736-9bcc-c6b879af22a7
+https://github.com/user-attachments/assets/034bc5d7-fdad-4df6-9c0e-021e309ba249
 
 ## Setup
 
